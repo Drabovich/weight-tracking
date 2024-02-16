@@ -1,11 +1,4 @@
 class Weight {
-  // Получение последнего веса
-  lastValue(data) {
-    if (!data.length) return;
-
-    return [...data].sort((a, b) => b.date - a.date)[0].weight;
-  }
-
   // Получение максимального веса среди всех записей
   maxValue(data) {
     if (!data.length) return;

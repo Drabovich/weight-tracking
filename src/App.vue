@@ -33,9 +33,12 @@ onMounted(() => {
 });
 
 // Запись в LS, измененной цели по желаемому весу
-watch(inputValueGoal, () => {
-  if (inputValueGoal.value && !NUMBER_REGEX.test(inputValueGoal.value)) return;
-  LocalData.setGoal(inputValueGoal.value);
+watch(inputValueGoal, (newValue) => {
+  if (newValue && !NUMBER_REGEX.test(newValue)) return;
+  LocalData.setGoal(newValue);
+
+  // Расчет всех показателей для progress bar
+  calculateProgressBarValue(weightsLS.value, newValue);
 });
 
 // Расчеты при любом изменении weightsLS
@@ -43,14 +46,8 @@ watch(weightsLS, (newValue) => {
   if (!newValue || newValue.length < 2) return;
   newValue.sort((a, b) => a.date - b.date);
 
-  // Получение последней записи веса
-  lastWeight.value = Weight.lastValue(newValue);
-  maxWeight.value = Weight.maxValue(newValue);
-  progressBarValue.value = Weight.calculateRatio(
-    lastWeight.value,
-    maxWeight.value,
-    inputValueGoal.value
-  );
+  // Расчет всех показателей для progress bar
+  calculateProgressBarValue(newValue, inputValueGoal.value);
 
   // Получение последних 7 дат и записей веса
   const sortedWeights = [...newValue];
@@ -92,6 +89,19 @@ const createWeightLS = (data) => {
   weightsLS.value.sort((a, b) => a.date - b.date);
   LocalData.setRecords(weightsLS.value);
 };
+
+// Расчет всех показателей для progress bar
+function calculateProgressBarValue(arr, goal) {
+  if (!arr || arr.length < 2) return;
+
+  lastWeight.value = arr.length ? arr[arr.length - 1].weight : '';
+  maxWeight.value = Weight.maxValue(arr);
+  progressBarValue.value = Weight.calculateRatio(
+    lastWeight.value,
+    maxWeight.value,
+    goal
+  );
+}
 
 // Фильтрация по заданным элементам
 function filtredList(param) {
