@@ -1,1 +1,2 @@
-![Image alt](https://github.com/Drabovich/weight-tracking/raw/main/assets/images/1.jng)
+# Preview project "weight tracking"
+<img src="/src/assets/images/1.jpg" width="400">
